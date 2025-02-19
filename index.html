@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>University Courses</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+        <h1>Welcome to Our University</h1>
+        <h2>Available Courses</h2>
+        <ul>
+            {% for course in courses %}
+                <li>{{ course.name }}</li>
+            {% endfor %}
+        </ul>
+        <a href="/register" style="display: block; margin: 20px auto; padding: 10px 20px; background-color: white; color: black; text-align: center; text-decoration: none; width: 150px; border-radius: 5px;">Register</a>
+        <a href="/student_login" style="display: block; margin: 20px auto; padding: 10px 20px; background-color: white; color: black; text-align: center; text-decoration: none; width: 150px; border-radius: 5px;">Student Login</a>
+        <a href="/admin">Admin Panel</a>
+</body>
+</html>

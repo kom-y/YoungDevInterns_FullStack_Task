@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard</title>
+    <style>
+        body {
+            background-color: #F0F4F8;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .profile-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .profile-card h3 {
+            color: #1E3A8A;
+        }
+
+        .profile-card p {
+            font-size: 16px;
+            margin: 10px 0;
+        }
+
+        /* Form Styling */
+        .edit-form {
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .edit-form label {
+            display: block;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .edit-form input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .edit-form button {
+            margin-top: 15px;
+            width: 100%;
+            padding: 10px;
+            background-color: #1E3A8A;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .edit-form button:hover {
+            background-color: #3B5998;
+        }
+
+        /* Logout Button */
+        .logout-btn {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #E63946;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="profile-card">
+        <h2>Welcome, {{ student['name'] }}!</h2>
+        <p><strong>Email:</strong> {{ student['email'] }}</p>
+
+        <!-- Edit Profile Section -->
+        <h3>Edit Profile</h3>
+        <form class="edit-form" action="{{ url_for('edit_profile') }}" method="POST">
+            <label for="name">Full Name:</label>
+            <input type="text" name="name" value="{{ student['name'] }}" required>
+            
+            <label for="email">Email:</label>
+            <input type="email" name="email" value="{{ student['email'] }}" required>
+            
+            <label for="password">New Password:</label>
+            <input type="password" name="password">
+            
+            <button type="submit">Update Profile</button>
+        </form>
+
+        <!-- Logout Button -->
+        <form action="{{ url_for('logout') }}" method="GET">
+            <button class="logout-btn" type="submit">Logout</button>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,129 @@
+/* General Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #1E1E2E; /* Dark Background */
+    color: #E0E0E0; /* Light Text for readability */
+    text-align: center;
+    margin: 0;
+    padding: 20px;
+}
+
+/* Headings */
+h1, h2, h3 {
+    color: #4A90E2; /* Soft Blue */
+    margin-bottom: 10px;
+}
+
+/* Form Styling */
+form {
+    margin: 20px auto;
+    padding: 20px;
+    width: 100%;
+    max-width: 400px;
+   /* background: #2E2E3E; Darker Form Background */
+    border-radius: 8px;
+   /* box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+input, button {
+    display: block;
+    width: calc(100% - 20px); /* Prevents overlap */
+    margin: 10px auto;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+}
+
+/* Input Fields */
+input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+    background: #3E3E4E;
+    color: #FFFFFF;
+}
+
+/* Buttons */
+button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background 0.3s;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+/* Table Styling */
+table {
+    width: 100%;
+    max-width: 800px;
+    margin: 20px auto;
+    border-collapse: collapse;
+    background: #2E2E3E; /* Dark Table Background */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+th, td {
+    padding: 12px;
+    text-align: center;
+    border: 1px solid #4caf50;
+}
+
+th {
+    background-color: #4A90E2;
+    color: white;
+    font-weight: bold;
+}
+
+td {
+    color: #E0E0E0;
+}
+
+tr:nth-child(even) {
+    background-color: #3E3E4E;
+}
+
+/* Logout Link */
+a {
+    display: inline-block;
+    margin-top: 20px;
+    color: #FF6B6B;
+    font-size: 16px;
+    font-weight: bold;
+    text-decoration: none;
+    transition: 0.3s ease-in-out;
+}
+
+a:hover {
+    color: #FF3B3B;
+}
+
+/* Responsive Table Styling */
+@media (max-width: 600px) {
+    table {
+        width: 100%;
+        font-size: 14px;
+    }
+
+    th, td {
+        padding: 8px;
+    }
+
+    button {
+        padding: 6px;
+        font-size: 12px;
+    }
+}
+
+
+

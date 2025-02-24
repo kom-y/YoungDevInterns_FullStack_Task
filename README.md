@@ -1,7 +1,7 @@
 # YoungDevInterns_FullStack_Task
 # University Learning Platform
 
-This is a **full-stack university Website** similar to Khan Academy, developed using Flask, SQLite, HTML, and CSS. The platform includes both client and admin-side functionalities, supports dynamic course management, user authentication, and a structured student dashboard.
+This is a **full-stack university Website**, developed using Flask, SQLite, HTML, and CSS. The platform includes both client and admin-side functionalities, supports dynamic course management, user authentication, and a structured student dashboard.
 
 ## 🚀 Features
 

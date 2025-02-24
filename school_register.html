@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏫 School Registration</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: #0d3a4d; /* Dark Blue Background */
+            color: white; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+        }
+        .register-container {
+            background: white;
+            padding: 35px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.3);
+            width: 420px;
+            text-align: center;
+            color: black;
+        }
+        .register-container img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%; /* Circular Image */
+            object-fit: cover;
+            margin-bottom: 10px;
+            border: 3px solid #87ceeb;
+        }
+        .register-container h1 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        .form-control {
+            background: #cccaca;
+            color: black;
+            border: 1px solid #555;
+            padding: 12px;
+            text-align: center;
+        }
+        .form-control::placeholder {
+            text-align: center;
+        }
+        .form-control:focus {
+            background: #3f3e3e;
+            color: white;
+            border-color: #87ceeb;
+            box-shadow: none;
+        }
+        .btn-success {
+            background: rgb(22, 163, 74);
+            border: none;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            width: 100%;
+            transition: 0.3s;
+        }
+        .btn-success:hover {
+            background: rgb(20, 132, 64);
+        }
+        .btn-secondary {
+            background: white;
+            color: black;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            width: 100%;
+            transition: 0.3s;
+        }
+        .btn-secondary:hover {
+            background: #cccaca;
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <img src="{{ url_for('static', filename='images/Capture.png') }}" alt="School Logo">
+        <h1>🏫 Register Your School</h1>
+        <form action="/school_register" method="post">
+            <input type="text" name="school_name" class="form-control my-2" placeholder="🏫 School Name" required>
+            <input type="text" name="username" class="form-control my-2" placeholder="👤 Username" required>
+            <input type="password" name="password" class="form-control my-2" placeholder="🔑 Password" required>
+            <button type="submit" class="btn btn-success">🚀 Register</button>
+            <a href="/" class="btn btn-secondary mt-2">🏠 Back to Home</a>
+        </form>
+    </div>
+</body>
+</html>

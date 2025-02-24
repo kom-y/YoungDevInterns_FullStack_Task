@@ -27,4 +27,28 @@ This is a **full-stack university Website**, developed using Flask, SQLite, HTML
 This project was assigned as a task by **YoungDevs Intern**. Special thanks for the opportunity to work on a full-stack project and enhance my development skills!
 
 ---
+
+# MultiLogin School System 🎓
+
+A Flask-based web application that allows admins, schools, and students to log in and manage their respective dashboards.
+
+## 🚀 Features
+- Admin Login System
+- School Registration & Login
+- Student Management (Add/Edit/Delete Students)
+- Separate Dashboards for Admin and Schools
+- Modern UI using Bootstrap
+- Secure Authentication using Flask Sessions
+
+## 🛠 Technologies Used
+- Python (Flask)
+- SQLite (Database)
+- HTML, CSS, Bootstrap (Frontend)
+- SQLAlchemy (ORM)
+
+  ## 🔥 Acknowledgment
+This project was assigned as a task by **YoungDevs Intern**. Special thanks for the opportunity to work on a full-stack project and enhance my development skills!
+
 Made with ❤️ by **KOMAL SHAIKH**
+
+

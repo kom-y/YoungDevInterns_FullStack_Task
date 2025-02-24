@@ -1,176 +1,204 @@
-from flask import Flask, render_template, request, redirect, session
-import sqlite3
+from flask import Flask, render_template, request, redirect, url_for, session
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key'  # Secret key for session management
+app.secret_key = "secret_key"
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+db = SQLAlchemy(app)
 
-# Function to connect to database
-def get_db_connection():
-    conn = sqlite3.connect('database.db')
-    conn.row_factory = sqlite3.Row
-    return conn
+# Database Models
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(50), unique=True, nullable=False)
+    password = db.Column(db.String(50), nullable=False)
+    role = db.Column(db.String(10), nullable=False)  # 'admin' or 'school'
 
-# Route for homepage
+class School(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    school_name = db.Column(db.String(100), unique=True, nullable=False)
+    username = db.Column(db.String(50), unique=True, nullable=False)
+    password = db.Column(db.String(50), nullable=False)
+
+class Student(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    age = db.Column(db.Integer, nullable=False)
+    grade = db.Column(db.String(20), nullable=False)
+    school_id = db.Column(db.Integer, db.ForeignKey('school.id'), nullable=False)
+  
+# Initialize Database
+with app.app_context():
+    db.create_all()
+
+# Index Route
 @app.route('/')
-def home():
-    conn = get_db_connection()
-    courses = conn.execute('SELECT * FROM courses').fetchall()
-    conn.close()
-    return render_template('index.html', courses=courses)
+def index():
+    return render_template('index.html')
 
-# Login route
-@app.route('/login', methods=['GET', 'POST'])
-def login():
+# Admin Login
+@app.route('/admin_login', methods=['GET', 'POST'])
+def admin_login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        if username == 'admin' and password == '1234':
-            session['admin'] = True
-            return redirect('/admin')
-        else:
-            return "Invalid credentials! Try again."
-    
-    return render_template('login.html')
+        admin = User.query.filter_by(username=username, password=password, role='admin').first()
+        if admin:
+            session['user'] = username
+            return redirect(url_for('admin_dashboard'))
+        return "Invalid Admin Credentials! <a href='/admin_login'>Try again</a>"
+    return render_template('admin_login.html')
 
-# Register route
-@app.route('/register', methods=['GET', 'POST'])
-def register():
+# School Registration
+@app.route('/school_register', methods=['GET', 'POST'])
+def school_register():
+    if request.method == 'POST':
+        school_name = request.form['school_name']
+        username = request.form['username']
+        password = request.form['password']
+
+        new_school = School(school_name=school_name, username=username, password=password)
+        db.session.add(new_school)
+        db.session.commit()
+        return redirect(url_for('school_login'))
+    return render_template('school_register.html')
+
+# School Login
+@app.route('/school_login', methods=['GET', 'POST'])
+def school_login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        school = School.query.filter_by(username=username, password=password).first()
+        if school:
+            session['school'] = username
+            return redirect(url_for('school_dashboard'))
+        return "Invalid School Credentials! <a href='/school_login'>Try again</a>"
+    return render_template('school_login.html')
+
+# Admin Dashboard
+@app.route('/admin_dashboard')
+def admin_dashboard():
+    if 'user' not in session:
+        return redirect(url_for('admin_login'))
+    
+    schools = School.query.all()
+    users = User.query.filter_by(role='school').all()  # Fetch all school users
+    total_schools = len(schools)
+    total_users = len(users)
+
+    return render_template('admin_dashboard.html', schools=schools, users=users, total_schools=total_schools, total_users=total_users)
+
+# School Dashboard
+@app.route('/school_dashboard')
+def school_dashboard():
+    if 'school' not in session:
+        return redirect(url_for('school_login'))
+    
+    # Fetch the school details from the database
+    school = School.query.filter_by(username=session['school']).first()
+
+    if not school:
+        return redirect(url_for('school_login'))  # Safety check if school not found
+
+    return render_template('school_dashboard.html', school_name=school.school_name)
+
+# Manage Students
+@app.route('/school_dashboard/students', methods=['GET', 'POST'])
+def manage_students():
+    if 'school' not in session:
+        return redirect(url_for('school_login'))
+    
+    school = School.query.filter_by(username=session['school']).first()
+    
     if request.method == 'POST':
         name = request.form['name']
-        email = request.form['email']
-        password = request.form['password']
-        
-        conn = get_db_connection()
-        conn.execute('INSERT INTO students (name, email, password) VALUES (?, ?, ?)', (name, email, password))
-        conn.commit()
-        conn.close()
+        age = request.form['age']
+        grade = request.form['grade']
 
-        return "Registration Successful! <a href='/login'>Go to Login</a>"
+        new_student = Student(name=name, age=age, grade=grade, school_id=school.id)
+        db.session.add(new_student)
+        db.session.commit()
+        return redirect(url_for('manage_students'))
 
-    return render_template('register.html')
+    students = Student.query.filter_by(school_id=school.id).all()
+    return render_template('manage_students.html', students=students)
 
-# Student login route
-@app.route('/student_login', methods=['GET', 'POST'])
-def student_login():
+# Delete Student
+@app.route('/delete_student/<int:id>', methods=['POST'])
+def delete_student(id):
+    student = Student.query.get(id)
+    if student:
+        db.session.delete(student)
+        db.session.commit()
+    return redirect(url_for('manage_students'))
+
+# Delete School
+@app.route('/delete_school/<int:id>', methods=['POST'])
+def delete_school(id):
+    if 'user' not in session:
+        return redirect(url_for('admin_login'))
+    
+    school = School.query.get(id)
+    if school:
+        db.session.delete(school)
+        db.session.commit()
+    
+    return redirect(url_for('admin_dashboard'))
+
+# Delete User
+@app.route('/delete_user/<int:id>', methods=['POST'])
+def delete_user(id):
+    if 'user' not in session:
+        return redirect(url_for('admin_login'))
+    
+    user = User.query.get(id)
+    if user:
+        db.session.delete(user)
+        db.session.commit()
+    
+    return redirect(url_for('admin_dashboard'))
+
+# Edit School
+@app.route('/edit_school/<int:id>', methods=['GET', 'POST'])
+def edit_school(id):
+    if 'user' not in session:
+        return redirect(url_for('admin_login'))
+    
+    school = School.query.get(id)
+    
     if request.method == 'POST':
-        email = request.form.get('email')
-        password = request.form.get('password')
-
-        print(f"🔎 Login Attempt - Email: {email}, Password: {password}")  
-
-        conn = get_db_connection()
-        user = conn.execute('SELECT * FROM students WHERE email = ?', (email,)).fetchone()
-        conn.close()
-
-        if user:
-            print(f" User Found: {user}") 
-        else:
-            print(" No user found with this email.")
-
-        if user and password == user['password']:
-            session['student'] = email
-            print(" Login Successful!")  
-            return redirect('/dashboard')
-        else:
-            print(" Invalid email or password!")
-            return " Invalid email or password! <a href='/student_login'>Try again</a>"
-
-    return render_template('student_login.html')
-
-# Dashboard route
-@app.route('/dashboard')
-def dashboard():
-    if 'student' not in session:
-        return redirect('/student_login')
-
-    conn = get_db_connection()
+        school.school_name = request.form['school_name']
+        school.username = request.form['username']
+        school.password = request.form['password']
+        db.session.commit()
+        
+        return redirect(url_for('admin_dashboard'))
     
-    # Fetch student details
-    student = conn.execute('SELECT * FROM students WHERE email = ?', (session['student'],)).fetchone()
+    return render_template('edit_school.html', school=school)
+
+# Edit User
+@app.route('/edit_user/<int:id>', methods=['GET', 'POST'])
+def edit_user(id):
+    if 'user' not in session:
+        return redirect(url_for('admin_login'))
     
-    conn.close()
-
-    return render_template('dashboard.html', student=student)
-
-# Edit profile route
-@app.route('/edit_profile', methods=['POST'])
-def edit_profile():
-    if 'student' not in session:
-        return redirect('/student_login')
-
-    name = request.form.get('name')
-    email = request.form.get('email')
-    password = request.form.get('password')
-
-    conn = get_db_connection()
+    user = User.query.get(id)
     
-    if password:  # Only update password if provided
-        conn.execute('UPDATE students SET name = ?, email = ?, password = ? WHERE email = ?',
-                     (name, email, password, session['student']))
-    else:  # Update only name and email
-        conn.execute('UPDATE students SET name = ?, email = ? WHERE email = ?',
-                     (name, email, session['student']))
+    if request.method == 'POST':
+        user.username = request.form['username']
+        user.password = request.form['password']
+        db.session.commit()
+        
+        return redirect(url_for('admin_dashboard'))
     
-    conn.commit()
-    conn.close()
+    return render_template('edit_user.html', user=user)
 
-    # Update session email if changed
-    session['student'] = email
-
-    return redirect('/dashboard')
-
-# Logout route
+# Logout
 @app.route('/logout')
 def logout():
-    session.pop('admin', None)
-    return redirect('/')
-
-# Protect admin route
-@app.route('/admin', methods=['GET', 'POST'])
-def admin():
-    if 'admin' not in session:
-        return redirect('/login')
-
-    conn = get_db_connection()
-
-    # Handle form submission (Adding a course)
-    if request.method == 'POST':
-        course_name = request.form.get('course_name')
-        if course_name:  # Ensure course name is not empty
-            conn.execute('INSERT INTO courses (name) VALUES (?)', (course_name,))
-            conn.commit()
-            print(f"✅ Course Added: {course_name}")  # Debugging message
-            return redirect('/admin')  # Refresh the page to update the list
-
-    # Fetch courses and students
-    courses = conn.execute('SELECT * FROM courses').fetchall()
-    students = conn.execute('SELECT * FROM students').fetchall()
-
-    conn.close()
-    return render_template('admin.html', courses=courses, students=students)
-
-# Route to delete a course
-@app.route('/delete/<int:id>', methods=['POST'])
-def delete_course(id):
-    conn = get_db_connection()
-    conn.execute('DELETE FROM courses WHERE id = ?', (id,))
-    conn.commit()
-    conn.close()
-    return redirect('/admin')
+    session.pop('user', None)
+    session.pop('school', None)
+    return redirect(url_for('index'))
 
 if __name__ == '__main__':
-    def init_db():
-        conn = get_db_connection()
-        conn.execute('''CREATE TABLE IF NOT EXISTS courses (
-                           id INTEGER PRIMARY KEY AUTOINCREMENT,
-                           name TEXT NOT NULL)''')
-        conn.execute('''CREATE TABLE IF NOT EXISTS students (
-                           id INTEGER PRIMARY KEY AUTOINCREMENT,
-                           name TEXT NOT NULL,
-                           email TEXT NOT NULL,
-                           password TEXT NOT NULL)''')
-        conn.commit()
-        conn.close()
-
-    init_db()
     app.run(debug=True)

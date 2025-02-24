@@ -3,19 +3,108 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>University Courses</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <title>MultiLogin School System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        body {
+            display: flex;
+            height: 100vh;
+            background: #87ceeb; /* Sky Blue */
+        }
+        .left-section {
+            width: 50%;
+            background: linear-gradient(135deg, #081920, #051920);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            text-align: center;
+        }
+        .left-section img {
+            width: 250px;
+            border-radius: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.7);
+            box-shadow: 0px 0px 15px rgba(255, 255, 255, 0.2);
+        }
+        .tagline {
+            margin-top: 14px;
+            font-style: italic;
+            font-size: 19px;
+            font-weight: bold;
+            color: #bdb7b7;
+        }
+        .right-section {
+            width: 50%;
+            background: linear-gradient(135deg, #0b2c3f, #0d3a4d);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            text-align: center;
+        }
+        .welcome-text {
+            font-size: 50px;
+            font-weight: bold;
+            color: #e7e6dd; /* Yellow color for contrast */
+            font-family: 'Arial Black', sans-serif;
+            margin-bottom: 30px;
+        }
+        .buttons-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        .btn {
+            width: 250px;
+            padding: 14px;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            text-decoration: none; /* Removed underline */
+        }
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2);
+        }
+        .btn.admin { background: #007bff; color: white; }
+        .btn.admin:hover { background: #0056b3; }
+        .btn.register { background: #218838; color: white; }
+        .btn.register:hover { background: #19692c; }
+        .btn.login { background: #ffc107; color: black; }
+        .btn.login:hover { background: #d39e00; }
+    </style>
 </head>
 <body>
-        <h1>Welcome to Our University</h1>
-        <h2>Available Courses</h2>
-        <ul>
-            {% for course in courses %}
-                <li>{{ course.name }}</li>
-            {% endfor %}
-        </ul>
-        <a href="/register" style="display: block; margin: 20px auto; padding: 10px 20px; background-color: white; color: black; text-align: center; text-decoration: none; width: 150px; border-radius: 5px;">Register</a>
-        <a href="/student_login" style="display: block; margin: 20px auto; padding: 10px 20px; background-color: white; color: black; text-align: center; text-decoration: none; width: 150px; border-radius: 5px;">Student Login</a>
-        <a href="/admin">Admin Panel</a>
+    <div class="left-section">
+        <img src="{{ url_for('static', filename='images/Capture.png') }}" class="img-fluid">
+        <p class="tagline">A Seamless & Secure School Management System!</p>
+    </div>
+    <div class="right-section">
+        <p class="welcome-text">Welcome to MultiLogin School System</p>
+        <div class="buttons-container">
+            <a href="{{ url_for('admin_login') }}" class="btn admin"><i class="fas fa-user-shield"></i> Admin Login</a>
+            <a href="{{ url_for('school_register') }}" class="btn register"><i class="fas fa-school"></i> School Register</a>
+            <a href="{{ url_for('school_login') }}" class="btn login"><i class="fas fa-sign-in-alt"></i> School Login</a>
+        </div>
+    </div>
 </body>
 </html>
